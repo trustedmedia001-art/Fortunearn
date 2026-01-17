@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fortunex</title>
+
+<style>
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{
+    margin:0;
+    background:linear-gradient(180deg,#2b0000,#b00000);
+    color:#fff;
+}
+.container{max-width:420px;margin:auto;padding:15px}
+.card{
+    background:#7a0000;
+    border-radius:28px;
+    padding:20px;
+    margin-bottom:25px;
+}
+.hidden{display:none}
+
+input,select{
+    width:100%;
+    padding:15px;
+    border-radius:25px;
+    border:none;
+    margin-bottom:15px;
+    background:#3b0000;
+    color:#fff;
+}
+button{
+    border:none;
+    border-radius:25px;
+    padding:14px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+.btn-yellow{background:#f3ff66;color:#000}
+.btn-red{background:#ff0000;color:#fff}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:22px;
+    font-weight:bold;
+}
+.balance-card{
+    background:#5a0000;
+    border-radius:25px;
+    padding:20px;
+    margin-top:15px;
+}
+.balance{font-size:34px;font-weight:bold}
+.action-row{display:flex;gap:10px;margin-top:10px}
+.action-row button{flex:1}
+.withdraw{margin-top:10px;width:120px}
+
+.icon-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin:25px 0;
+}
+.icon-box{
+    background:#3b0000;
+    border-radius:18px;
+    padding:15px 8px;
+    text-align:center;
+    font-size:13px;
+}
+
+.video-card{
+    background:#000;
+    border-radius:25px;
+    padding:50px 10px;
+    text-align:center;
+}
+
+.share-card{
+    background:#5a0000;
+    border-radius:25px;
+    padding:20px;
+}
+
+.overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.7);
+    display:none;
+    align-items:center;
+    justify-content:center;
+}
+.popup{
+    background:#7a0000;
+    padding:25px;
+    border-radius:25px;
+    text-align:center;
+    width:85%;
+}
+.row{
+    background:#3b0000;
+    padding:15px;
+    border-radius:20px;
+    margin-bottom:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- REGISTER -->
+<div class="card" id="register">
+    <h2 style="text-align:center">Create an Account</h2>
+    <input id="fullname" placeholder="Full Name">
+    <input placeholder="Username">
+    <input placeholder="Phone Number">
+    <input placeholder="Email Address">
+
+    <select id="package">
+        <option value="">Select Package</option>
+        <option value="7500">FortuneX Starter – ₦7,500</option>
+        <option value="14500">FortuneX Plus – ₦14,500</option>
+    </select>
+
+    <button class="btn-yellow" onclick="goDashboard()">Register</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="hidden" id="dashboard">
+
+    <div class="topbar">
+        <div>Fort<span style="color:#f3ff66">une</span>x</div>
+        <div>🔔</div>
+    </div>
+
+    <p>Welcome, <strong><span id="userName"></span></strong></p>
+
+    <div class="balance-card" onclick="showPopup()">
+        <p>Available Balance</p>
+        <div class="balance">₦12,500</div>
+
+        <div class="action-row">
+            <button class="btn-red">+ Fund</button>
+            <button class="btn-red">⇄ Transfer</button>
+        </div>
+
+        <button class="btn-red withdraw">Withdraw</button>
+        <p style="font-size:12px">Updated Just Now</p>
+    </div>
+
+    <div class="icon-grid">
+        <div class="icon-box" onclick="showPopup()">🎵<br>Stream Songs</div>
+        <div class="icon-box" onclick="showPopup()">▶<br>Watch Videos</div>
+        <div class="icon-box" onclick="showPopup()">🎁<br>Fortune Box</div>
+        <div class="icon-box" onclick="showPopup()">💬<br>Chat & Earn</div>
+    </div>
+
+    <div class="video-card" onclick="showPopup()">
+        ▶<br><br>Watch Available Videos<br>
+        <strong>Fort<span style="color:#f3ff66">une</span>x</strong>
+    </div>
+
+    <div class="share-card">
+        <h3>Share and win massive prizes</h3>
+        <p>Fortunex will pay you extra when you share contents.</p>
+    </div>
+
+</div>
+
+<!-- PAYMENT -->
+<div class="card hidden" id="payment">
+    <h2>Complete Payment</h2>
+
+    <div class="row">Account Number<br><strong>7076482912</strong></div>
+    <div class="row">Account Name<br><strong>Gabriel Oluebube</strong></div>
+    <div class="row">Bank<br><strong>palmpay</strong></div>
+    <div class="row">Amount to Pay<br><strong>₦<span id="amount"></span></strong></div>
+
+    <button class="btn-yellow" onclick="confirmTelegram()">Submit Payment Proof</button>
+</div>
+
+</div>
+
+<!-- ACCESS CODE POPUP -->
+<div class="overlay" id="popup">
+    <div class="popup">
+        <h3>Account Not Activated</h3>
+        <p>You need an access code to activate your account.</p>
+        <button class="btn-yellow" onclick="goPayment()">Get Access Code</button>
+    </div>
+</div>
+
+<!-- OPAY WARNING POPUP -->
+<div class="overlay" id="opayWarning">
+    <div class="popup">
+        <h3>Important Notice</h3>
+        <p>
+            Opay is not allowed for payment because many payments of the same
+            amount have been made to this account, so Opay might decline
+            the transaction.
+        </p>
+        <button class="btn-yellow" onclick="closeOpay()">OK, I Understand</button>
+    </div>
+</div>
+
+<!-- TELEGRAM CONFIRM -->
+<div class="overlay" id="tgConfirm">
+    <div class="popup">
+        <h3>Submit Payment Proof</h3>
+        <p>You will be redirected to Telegram.</p>
+        <button class="btn-yellow" onclick="openTelegram()">Continue</button><br><br>
+        <button class="btn-red" onclick="closeTelegram()">Cancel</button>
+    </div>
+</div>
+
+<script>
+let amount=0;
+
+function goDashboard(){
+    const name=document.getElementById("fullname").value;
+    amount=document.getElementById("package").value;
+    if(name==""||amount==""){alert("Fill all fields");return;}
+    document.getElementById("userName").innerText=name;
+    document.getElementById("register").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+}
+function showPopup(){
+    document.getElementById("popup").style.display="flex";
+}
+function goPayment(){
+    document.getElementById("popup").style.display="none";
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("payment").classList.remove("hidden");
+    document.getElementById("amount").innerText=amount;
+    document.getElementById("opayWarning").style.display="flex";
+}
+function closeOpay(){
+    document.getElementById("opayWarning").style.display="none";
+}
+function confirmTelegram(){
+    document.getElementById("tgConfirm").style.display="flex";
+}
+function closeTelegram(){
+    document.getElementById("tgConfirm").style.display="none";
+}
+function openTelegram(){
+    window.open("tg://resolve?domain=Coachceleste","_blank");
+    setTimeout(()=>{window.open("https://t.me/Coachceleste","_blank")},1000);
+}
+</script>
+
+</body>
+</html>
